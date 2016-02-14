@@ -23,9 +23,9 @@ class m160210_075104_twit_tables extends Migration
     {
         $this->createTable('content',[
             'tweet_id' => Schema::TYPE_PK,
-            'tweet_data' => Schema::TYPE_STRING,
+            'tweet_data' => Schema::TYPE_DATETIME,
             'tweet_text' => Schema::TYPE_STRING,
-            'tweet_db_save' => Schema::TYPE_STRING,
+            'tweet_db_save' => Schema::TYPE_DATETIME,
         ],"ENGINE=InnoDB DEFAULT CHARSET=utf8");
         $this->createTable('hashtags',[
             'hashtag_id' => Schema::TYPE_PK,
