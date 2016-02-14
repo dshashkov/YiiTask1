@@ -174,9 +174,9 @@
       <table id="85" parent="3" name="setup_timers"/>
       <table id="86" parent="3" name="threads"/>
       <table id="87" parent="4" name="migration"/>
-      <table id="88" parent="4" name="content"/>
-      <table id="89" parent="4" name="hashtags"/>
-      <table id="90" parent="4" name="content_hashtags"/>
+      <table id="88" parent="4" name="hashtag"/>
+      <table id="89" parent="4" name="tweet"/>
+      <table id="90" parent="4" name="tweet_hashtag"/>
       <table id="91" parent="5" name="country"/>
       <column id="92" parent="6" name="CHARACTER_SET_NAME">
         <mandatory>1</mandatory>
@@ -3785,75 +3785,76 @@ User</columns>
         <columns>version</columns>
         <primary>1</primary>
       </key>
-      <column id="931" parent="88" name="tweet_id">
+      <column id="931" parent="88" name="text">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
+      </column>
+      <key id="932" parent="88" name="PRIMARY">
+        <columns>text</columns>
+        <primary>1</primary>
+      </key>
+      <column id="933" parent="89" name="id">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
       </column>
-      <column id="932" parent="88" name="tweet_data">
-        <data-type>varchar(255)</data-type>
-      </column>
-      <column id="933" parent="88" name="tweet_text">
-        <data-type>varchar(255)</data-type>
-      </column>
-      <column id="934" parent="88" name="tweet_db_save">
-        <data-type>varchar(255)</data-type>
-      </column>
-      <key id="935" parent="88" name="PRIMARY">
-        <columns>tweet_id</columns>
-        <primary>1</primary>
-      </key>
-      <column id="936" parent="89" name="hashtag_id">
+      <column id="934" parent="89" name="text">
         <mandatory>1</mandatory>
-        <data-type>int(11)</data-type>
-      </column>
-      <column id="937" parent="89" name="hashtag_value">
         <data-type>varchar(255)</data-type>
       </column>
-      <key id="938" parent="89" name="PRIMARY">
-        <columns>hashtag_id</columns>
+      <column id="935" parent="89" name="date_written">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="936" parent="89" name="date_imported">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="937" parent="89" name="PRIMARY">
+        <columns>id</columns>
         <primary>1</primary>
       </key>
-      <column id="939" parent="90" name="tweet_id">
+      <column id="938" parent="90" name="tweet_id">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
         <default-expression>&apos;0&apos;</default-expression>
       </column>
-      <column id="940" parent="90" name="hashtag_id">
+      <column id="939" parent="90" name="hashtag_text">
         <mandatory>1</mandatory>
-        <data-type>int(11)</data-type>
-        <default-expression>&apos;0&apos;</default-expression>
+        <data-type>varchar(255)</data-type>
+        <default-expression>&apos;&apos;</default-expression>
       </column>
-      <key id="941" parent="90" name="PRIMARY">
+      <key id="940" parent="90" name="PRIMARY">
         <columns>tweet_id
-hashtag_id</columns>
+hashtag_text</columns>
         <primary>1</primary>
       </key>
-      <foreign-key id="942" parent="90" name="fk-content_hashtags-hashtag_id">
-        <columns>hashtag_id</columns>
-        <ref-key>hashtags.PRIMARY</ref-key>
+      <foreign-key id="941" parent="90" name="fk-tweet_hashtag-hashtag_text">
+        <columns>hashtag_text</columns>
+        <ref-key>hashtag.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <foreign-key id="943" parent="90" name="fk-content_hashtags-tweet_id">
+      <foreign-key id="942" parent="90" name="fk-tweet_hashtag-tweet_id">
         <columns>tweet_id</columns>
-        <ref-key>content.PRIMARY</ref-key>
+        <ref-key>tweet.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <column id="944" parent="91" name="code">
+      <column id="943" parent="91" name="code">
         <mandatory>1</mandatory>
         <data-type>char(2)</data-type>
       </column>
-      <column id="945" parent="91" name="name">
+      <column id="944" parent="91" name="name">
         <mandatory>1</mandatory>
         <data-type>char(52)</data-type>
       </column>
-      <column id="946" parent="91" name="population">
+      <column id="945" parent="91" name="population">
         <mandatory>1</mandatory>
         <data-type>int(11)</data-type>
         <default-expression>&apos;0&apos;</default-expression>
       </column>
-      <key id="947" parent="91" name="PRIMARY">
+      <key id="946" parent="91" name="PRIMARY">
         <columns>code</columns>
         <primary>1</primary>
       </key>

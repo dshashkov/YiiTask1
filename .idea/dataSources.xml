@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="3995890921">
+  <component name="DataSourceManagerImpl" format="xml" hash="2601624750">
     <data-source source="LOCAL" name="MySQL - twitdb@localhost" uuid="1a9079e8-a3b5-4668-88d4-c3186b8f80cf">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
