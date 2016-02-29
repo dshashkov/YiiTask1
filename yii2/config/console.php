@@ -17,6 +17,16 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'tweetloader' => [
+            'class' => 'app\components\TweetLoader',
+            'tweetConfig' => require(__DIR__.'/tweetConfig.php'),
+        ],
+        'tweetimporter' => [
+            'class' => 'app\components\TweetImporter',
+        ],
+        'tweetshow' => [
+            'class' => 'app\components\TweetShow',
+        ],
         'log' => [
             'targets' => [
                 [

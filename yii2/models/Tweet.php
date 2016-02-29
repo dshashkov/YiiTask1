@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-
+use DateTime;
 /**
  * This is the model class for table "tweet".
  *
@@ -17,6 +17,17 @@ use Yii;
  */
 class Tweet extends \yii\db\ActiveRecord
 {
+    public static function createPreparedTweet($tweetUnprepared)
+    {
+        $dateImportedFormat = new DateTime('now');
+        $dateImportedForSave  = $dateImportedFormat->format('F j, Y-m-d H:i:s');
+        $tweet = new Tweet();
+        $tweet->text = $tweetUnprepared['tweetText'];
+        $tweet->date_written = $tweetUnprepared['dateWriten'];
+        $tweet->date_imported = $dateImportedForSave;
+        return $tweet;
+    }
+
     /**
      * @inheritdoc
      */
