@@ -35,7 +35,7 @@ class TweetImporter extends Component{
         return $preparedTweets;
     }
 
-    public function saveTweet($preparedTweets){
+    private function saveTweet($preparedTweets){
 
         for ($i = 0; $i< count($preparedTweets); $i++) {
             $tweetForSave = Tweet::createPreparedTweet($preparedTweets[$i]);
