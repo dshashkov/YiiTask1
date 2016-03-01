@@ -8,6 +8,7 @@
 
 namespace app\components;
 
+use app\models\Tweet;
 use yii;
 use yii\base\Component;
 use DateTime;
@@ -41,9 +42,31 @@ class TweetStructure extends Component{
     }
 
     /**
+     * @return Tweet[]
+     */
+    public function iterateTweets()
+    {
+        $textArray = $this->getTweetText();
+        $dateArray = $this->getDateWriten();
+        $tagsArray = $this->getHashTags();
+
+        for ($i = 0; $i<$this->getTweetCounts();$i++)
+        {
+            $preparedTweet = [
+                'tweetText' => $textArray[$i],
+                'dateWriten' => $dateArray[$i],
+                'hashtags' => $tagsArray[$i],
+            ];
+            $tweet = Tweet::createPreparedTweet($preparedTweet);
+
+            yield $tweet;
+        }
+    }
+
+    /**
      * @return int
      */
-    public function getTweetCounts()
+    private function getTweetCounts()
     {
         return $this->tweetCounts;
     }
@@ -51,7 +74,7 @@ class TweetStructure extends Component{
     /**
      * @return mixed
      */
-    public function getTweetText()
+    private function getTweetText()
     {
         return $this->tweetText;
     }
@@ -59,7 +82,7 @@ class TweetStructure extends Component{
     /**
      * @return mixed
      */
-    public function getDateWriten()
+    private function getDateWriten()
     {
         return $this->dateWriten;
     }
@@ -67,10 +90,11 @@ class TweetStructure extends Component{
     /**
      * @return mixed
      */
-    public function getHashtags()
+    private function getHashtags()
     {
         return $this->hashtags;
     }
+
     private function parseCount($tweetsContent){
         return count($tweetsContent['statuses']);
     }

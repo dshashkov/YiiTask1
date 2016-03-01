@@ -12,34 +12,26 @@ use yii\base\Component;
 use app\models\Tweet;
 class TweetImporter extends Component{
 
-    public function tweetImport($unpreparedTweets){
+    /**
+     * @param TweetStructure $tweets
+     * @return Tweet[]
+     */
+    public function save(TweetStructure $tweets)
+    {
+        // TODO тут нарушение паттерна информационного посредника.
+        // TODO TweetImporter знает слишком много о внутренем устройстве TweetStructure
 
-        $tweets= \Yii::createObject([
-            'class' => TweetStructure::className(),
-        ],[$unpreparedTweets]);
 
-        $preparedTweets =[];
-        $textArray = $tweets->getTweetText();
-        $dateArray = $tweets->getDateWriten();
-        $tagsArray = $tweets->getHashTags();
+        // гораздо лучше если у TweetStructure будет метод iterate
+        // который будет возвращать через yield модель Tweet созданную внутри TweetStructure
+        // поскольку у него есть вся необходимая для этого инфа
+        $preparedTweets = [];
 
-        for ($i = 0; $i<$tweets->getTweetCounts();$i++)
-        {
-            $preparedTweets[$i] = [
-                'tweetText' => $textArray[$i],
-                'dateWriten' => $dateArray[$i],
-                'hashtags' => $tagsArray[$i],
-            ];
+        foreach($tweets->iterateTweets() as $tweet) {
+            $tweet->save();
+            $preparedTweets[] = $tweet;
         }
-        $this->saveTweet($preparedTweets);
+
         return $preparedTweets;
-    }
-
-    private function saveTweet($preparedTweets){
-
-        for ($i = 0; $i< count($preparedTweets); $i++) {
-            $tweetForSave = Tweet::createPreparedTweet($preparedTweets[$i]);
-            $tweetForSave->save();
-        }
     }
 }

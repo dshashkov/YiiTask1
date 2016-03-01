@@ -17,6 +17,12 @@ use DateTime;
  */
 class Tweet extends \yii\db\ActiveRecord
 {
+    /**
+     * TODO плохая практика передавать ассоциативные массивы в сигнатуру, с дальнейшим вытаскиванием ключей из неё.
+     * TODO здесь лучше сделать метод с сигнатурой createPreparedTweet(string $tweetText, \DateTime $dateWritten)
+     * @param $tweetUnprepared
+     * @return Tweet
+     */
     public static function createPreparedTweet($tweetUnprepared)
     {
         $dateImportedFormat = new DateTime('now');

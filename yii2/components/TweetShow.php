@@ -10,6 +10,11 @@ namespace app\components;
 use yii;
 use yii\base\Component;
 
+/**
+ * TODO это явно не тянет на компонент, это логика отрисовки инфы в конкретном action в консольном контроллере
+ * Class TweetShow
+ * @package app\components
+ */
 class TweetShow extends Component
 {
     public function showSavedTweets($tweetsForShow)

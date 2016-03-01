@@ -15,6 +15,11 @@ class TweetLoader extends Component{
 
     public $tweetConfig;
 
+    /**
+     * @param string $search
+     * @return TweetStructure
+     * @throws \yii\base\InvalidConfigException
+     */
     public function getPopularTweets($search = 'popular')
     {
         $tweetParams = [
@@ -23,6 +28,16 @@ class TweetLoader extends Component{
             'result_type' => 'popular'
         ];
         $tweet = new TwitterOAuth($this->tweetConfig);
-        return $tweet->get('search/tweets', $tweetParams);
+
+        /**
+         * @var TweetStructure $tweets
+         */
+        $unpreparedTweets = $tweet->get('search/tweets', $tweetParams);
+
+        $tweets = \Yii::createObject([
+            'class' => TweetStructure::className(),
+        ],[$unpreparedTweets]);
+
+        return $tweets;
     }
 }
