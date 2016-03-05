@@ -7,16 +7,21 @@
  */
 namespace app\components;
 
+use app\models\TweetStructure;
 use Yii;
 use yii\base\Component;
 use app\models\Tweet;
+use yii\base\Model;
+
 class TweetImporter extends Component{
 
+    /**
+     * @param $unpreparedTweets
+     * @return array
+     */
     public function tweetImport($unpreparedTweets){
 
-        $tweets= \Yii::createObject([
-            'class' => TweetStructure::className(),
-        ],[$unpreparedTweets]);
+        $tweets= new TweetStructure($unpreparedTweets);
 
         $preparedTweets =[];
         $textArray = $tweets->getTweetText();

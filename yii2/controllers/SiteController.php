@@ -51,6 +51,12 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+//        echo '<pre>';
+//
+//       print_r( $tweetLoader = Yii::$app->tweetloader->getPopularTweets('test'));
+//        echo '</pre>';
+//        Yii::$app->tweetshow->showSavedTweets(
+//            Yii::$app->tweetimporter->tweetImport($tweetLoader));
         return $this->render('index');
     }
 

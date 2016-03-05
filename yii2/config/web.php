@@ -7,6 +7,16 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [
+        'tweetloader' => [
+            'class' => 'app\components\TweetLoader',
+            'tweetConfig' => require(__DIR__.'/tweetConfig.php'),
+        ],
+        'tweetimporter' => [
+            'class' => 'app\components\TweetImporter',
+        ],
+        'tweetshow' => [
+            'class' => 'app\components\TweetShow',
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'dp3BtGMUeg6sgPW9DAXIapoK9b502rnr',
