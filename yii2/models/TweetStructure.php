@@ -10,37 +10,26 @@ namespace app\models;
 
 use yii;
 use yii\base\Model;
-use DateTime;
 
 class TweetStructure extends Model{
 
-    private $tweetContent;
-    private $tweetCounts;
     private $tweetText;
     private $dateWriten;
     private $hashtags;
 
     /**
-     * Tweet constructor.
-     * @param array $tweetContent
+     * TweetStructure constructor.
+     * @param array $hashtags
+     * @param $dateWriten
+     * @param $tweetText
      * @param array $config
      */
-    public function __construct($tweetContent,$config = [])
+    public function __construct($tweetText, $dateWriten, $hashtags, $config = [])
     {
-        $this->tweetContent = $tweetContent;
-        $this->tweetCounts = $this->parseCount($tweetContent);
-        $this->tweetText = $this->parseText($tweetContent);
-        $this->dateWriten = $this->parseDate($tweetContent);
-        $this->hashtags = $this->parseHashtags($tweetContent);
+        $this->tweetText = $tweetText;
+        $this->dateWriten = $dateWriten;
+        $this->hashtags = $hashtags;
         parent::__construct($config);
-    }
-
-    /**
-     * @return int
-     */
-    public function getTweetCounts()
-    {
-        return $this->tweetCounts;
     }
 
     /**
@@ -66,46 +55,4 @@ class TweetStructure extends Model{
     {
         return $this->hashtags;
     }
-    private function parseCount($tweetsContent){
-        return count($tweetsContent['statuses']);
-    }
-
-    private function parseText($tweetsContent){
-        $textArray = [];
-        $tweets = $tweetsContent['statuses'];
-        for ($i = 0; $i < count($tweets); $i++) {
-            array_push($textArray, $tweets[$i]['text']);
-        }
-        return $textArray;
-    }
-    private function parseDate($tweetsContent){
-        $dateArray = [];
-        $tweets = $tweetsContent['statuses'];
-
-        for ($i = 0; $i<count($tweets);$i++) {
-            $dateWritenFormat = new dateTime ($tweets[$i]['created_at']);
-            array_push($dateArray, $dateWritenFormat->format('F j, Y-m-d H:i:s'));
-        }
-        return $dateArray;
-    }
-    private function parseHashtags($tweetsContent){
-        $tagsArray = [];
-        $unpreparedTagsArray = [];
-
-        $tweets = $tweetsContent['statuses'];
-
-        for ($i = 0; $i < count($tweets); $i++) {
-            array_push($unpreparedTagsArray, $tweets[$i]['entities']['hashtags']);
-        }
-
-        foreach ($unpreparedTagsArray as $key) {
-            $tempArray = [];
-            foreach ($key as $k) {
-                array_push($tempArray, $k['text']);
-            }
-            array_push($tagsArray, $tempArray);
-        }
-        return $tagsArray;
-    }
-
 }

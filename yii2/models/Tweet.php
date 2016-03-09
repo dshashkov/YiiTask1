@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use DateTime;
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "tweet".
  *
@@ -15,15 +17,20 @@ use DateTime;
  * @property TweetHashtag[] $tweetHashtags
  * @property Hashtag[] $hashtagTexts
  */
-class Tweet extends \yii\db\ActiveRecord
+class Tweet extends ActiveRecord
 {
-    public static function createPreparedTweet($tweetUnprepared)
+    /**
+     * @param $tweetText
+     * @param $dateWriten
+     * @return Tweet
+     */
+    public static function createInstanceFromParam($tweetText, $dateWriten)
     {
         $dateImportedFormat = new DateTime('now');
         $dateImportedForSave  = $dateImportedFormat->format('F j, Y-m-d H:i:s');
         $tweet = new Tweet();
-        $tweet->text = $tweetUnprepared['tweetText'];
-        $tweet->date_written = $tweetUnprepared['dateWriten'];
+        $tweet->text = $tweetText;
+        $tweet->date_written = $dateWriten;
         $tweet->date_imported = $dateImportedForSave;
         return $tweet;
     }

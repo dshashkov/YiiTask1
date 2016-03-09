@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "tweet_hashtag".
@@ -13,8 +14,22 @@ use Yii;
  * @property Hashtag $hashtagText
  * @property Tweet $tweet
  */
-class TweetHashtag extends \yii\db\ActiveRecord
+class TweetHashtag extends ActiveRecord
 {
+
+    /**
+     * @param $id
+     * @param $hashtag
+     * @return TweetHashtag
+     */
+    public static function createInstanceFromParam($id, $hashtag)
+    {
+        $TweetHashtagTable = new TweetHashtag();
+        $TweetHashtagTable->tweet_id = $id;
+        $TweetHashtagTable->hashtag_text = $hashtag;
+        return $TweetHashtagTable;
+    }
+
     /**
      * @inheritdoc
      */
