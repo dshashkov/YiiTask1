@@ -27,6 +27,15 @@ return [
         'tweetshow' => [
             'class' => 'app\components\TweetShow',
         ],
+        'tweethashtagfinder' => [
+            'class' => 'app\components\TweetHashtagFinder',
+        ],
+        'tweetlastfinder' => [
+            'class' => 'app\components\TweetLastFinder',
+        ],
+        'tweetstatistic' => [
+            'class' => 'app\components\TweetStatistic',
+        ],
         'log' => [
             'targets' => [
                 [

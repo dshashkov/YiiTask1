@@ -7,39 +7,102 @@
  */
 namespace app\components;
 
+use app\models\Hashtag;
+use app\models\TweetHashtag;
+use app\models\TweetStructure;
 use Yii;
 use yii\base\Component;
 use app\models\Tweet;
+use yii\base\Exception;
+
 class TweetImporter extends Component{
 
+    /**
+     * @param $unpreparedTweets
+     * @return array
+     * @throws Exception
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function tweetImport($unpreparedTweets){
 
-        $tweets= \Yii::createObject([
-            'class' => TweetStructure::className(),
-        ],[$unpreparedTweets]);
+        $savedTweets =[];
 
-        $preparedTweets =[];
-        $textArray = $tweets->getTweetText();
-        $dateArray = $tweets->getDateWriten();
-        $tagsArray = $tweets->getHashTags();
+        $dbTransaction = Tweet::getDb()->beginTransaction();
+        try {
+            foreach ($unpreparedTweets as $tweet) {
 
-        for ($i = 0; $i<$tweets->getTweetCounts();$i++)
+                /**
+                 * @var TweetStructure $tweet
+                 */
+
+                $this->saveTweet($tweet);
+                $savedTweets[] = [
+                    'tweetText' => $tweet->getTweetText(),
+                    'dateWriten' => $tweet->getDateWriten(),
+                    'hashtags' => $tweet->getHashtags(),
+                ];
+
+            }
+            $dbTransaction->commit();
+        }catch(\Exception $e )
         {
-            $preparedTweets[$i] = [
-                'tweetText' => $textArray[$i],
-                'dateWriten' => $dateArray[$i],
-                'hashtags' => $tagsArray[$i],
-            ];
+            $dbTransaction->rollBack();
+            throw $e;
         }
-        $this->saveTweet($preparedTweets);
-        return $preparedTweets;
+
+        /**
+         * @var TweetShow $tweetShow
+         */
+        $tweetShow = Yii::$app->get('tweetshow');
+        $tweetShow->showSavedTweets($savedTweets);
     }
 
-    private function saveTweet($preparedTweets){
 
-        for ($i = 0; $i< count($preparedTweets); $i++) {
-            $tweetForSave = Tweet::createPreparedTweet($preparedTweets[$i]);
-            $tweetForSave->save();
+    /**
+     * @param $tweet
+     * @throws Exception
+     */
+    private function saveTweet($tweet)
+    {
+        /**
+         * @var TweetStructure $tweet
+         */
+        $tweetText = $tweet->getTweetText();
+        $dateWriten = $tweet->getDateWriten();
+        $tweetHashtags = $tweet->getHashtags();
+
+
+
+        $tweetTable = Tweet::createInstanceFromParam($tweetText, $dateWriten);
+        if (!$tweetTable->save()) {
+            throw new Exception('Ошибка записи в базу данных: Таблица tweet');
+        }
+
+
+        if (!empty($tweetHashtags))
+        {
+            foreach ($tweetHashtags as $key) {
+                $hashtagFromDb = Hashtag::findOne($key);
+                if (empty($hashtagFromDb))
+                {
+                    $hashtagTable = Hashtag::createInstanceFromParam($key);
+                    if (!$hashtagTable->save())
+                    {
+                        throw new Exception('Ошибка записи в базу данных: Таблица hashtag');
+                    }
+                }
+                $tweetLastId = Tweet::find()
+                    ->max('id');
+
+                $TweetHashtagTable = TweetHashtag::createInstanceFromParam($tweetLastId,$key);
+                if (!$TweetHashtagTable->save())
+                {
+                    throw new Exception('Ошибка записи в базу данных: Таблица tweet_hashtag');
+                }
+            }
+
         }
     }
+
 }

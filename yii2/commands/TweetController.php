@@ -1,18 +1,32 @@
 <?php
 namespace app\commands;
 
+use app\components\TweetImporter;
+use app\components\TweetLoader;
 use yii\console\Controller;
 use yii;
-use TwitterOAuth\TwitterOAuth;
-use app\models\Tweet;
-use DateTime;
 
 class TweetController extends Controller
 {
+
+    /**
+     * @param string $search
+     * @throws yii\base\InvalidConfigException
+     */
     public function actionIndex($search = 'popular')
     {
-        $tweetLoader = Yii::$app->tweetloader->getPopularTweets($search);
-        Yii::$app->tweetshow->showSavedTweets(
-            Yii::$app->tweetimporter->tweetImport($tweetLoader));
+        /**
+         * @var TweetLoader $tweetLoader
+         */
+        $tweetLoader = Yii::$app->get('tweetloader');
+
+        /**
+         *@var TweetImporter $tweetImporter
+         */
+        $tweetImporter = Yii::$app->get('tweetimporter');
+
+        $tweetsArray = $tweetLoader->getPopularTweets($search);
+        $tweetImporter->tweetImport($tweetsArray);
+
     }
 }
