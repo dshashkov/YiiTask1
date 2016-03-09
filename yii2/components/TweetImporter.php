@@ -48,7 +48,7 @@ class TweetImporter extends Component{
         }catch(\Exception $e )
         {
             $dbTransaction->rollBack();
-            throw new Exception($e);
+            throw $e;
         }
 
         /**
