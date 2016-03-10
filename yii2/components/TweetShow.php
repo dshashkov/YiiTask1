@@ -100,7 +100,7 @@ class TweetShow extends Component
 
             foreach($hashtags as $key => $value)
             {
-                echo "\033[01;36m #".$key. " - \033[01;31m". $value * $onePercent . "%\n";
+                echo "\033[01;36m #".$key. " - \033[01;31m". round($value * $onePercent, 2) . "%\n";
             }
         } else {
             echo ".\n\n";
