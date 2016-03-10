@@ -17,8 +17,7 @@ class TweetsStatisticController extends Controller{
 
 
     public function actionIndex(){
-        /** @var DateTime $dateTime */
-        $dateTime ='';
+
         $stdin = fopen("php://stdin", "r");
 
         /** @var TweetShow $tweetShow */
@@ -27,8 +26,9 @@ class TweetsStatisticController extends Controller{
 
         $dateForSearch = fgets($stdin);
         try{
-        $this->$dateTime = new DateTime($dateForSearch);
-        } catch (\Exception $e) {
+        $dateTime = new DateTime($dateForSearch);
+        } catch (\Exception $e)
+        {
             echo "\033[01;31mНеверный формат даты!!!\n";
             die();
         }
