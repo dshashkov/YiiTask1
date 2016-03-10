@@ -8,5 +8,5 @@ return [
     'dsn' => $dsn,
     'username' => $username,
     'password' => $password,
-    'charset' => 'utf8',ss
+    'charset' => 'utf8',
 ];
