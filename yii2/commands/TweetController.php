@@ -3,6 +3,7 @@ namespace app\commands;
 
 use app\components\TweetImporter;
 use app\components\TweetLoader;
+use app\components\TweetShow;
 use yii\console\Controller;
 use yii;
 
@@ -26,7 +27,13 @@ class TweetController extends Controller
         $tweetImporter = Yii::$app->get('tweetimporter');
 
         $tweetsArray = $tweetLoader->getPopularTweets($search);
-        $tweetImporter->tweetImport($tweetsArray);
 
+        $savedTweets = $tweetImporter->save($tweetsArray);
+
+        /**
+         * @var TweetShow $tweetShow
+         */
+        $tweetShow = Yii::$app->get('tweetshow');
+        $tweetShow->showSavedTweets($savedTweets);
     }
 }

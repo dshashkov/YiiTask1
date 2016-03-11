@@ -22,29 +22,24 @@ class TweetHashtagFinder extends Component{
         $idForSearch = [];
 
         $tweetsHashtags = TweetHashtag::find()
-            ->where(['hashtag_text' => $hashtagForSearch])
+            ->byText($hashtagForSearch)
             ->all();
 
         foreach($tweetsHashtags as $founded)
         {
-            $idForSearch[]=(int)$founded->attributes['tweet_id'];
+            $idForSearch[]=(int)$founded->tweet_id;
         }
         $tweetsByHashtag = Tweet::find()
-            ->where([
-                'id' => $idForSearch
-            ])
+            ->byId($idForSearch)
             ->all();
 
         $tweetsForShow = [];
         foreach ($tweetsByHashtag as $tweet)
         {
             $tempHashtag = [];
-            $findHashtags = TweetHashtag::find()
-                ->where(['tweet_id' => $tweet->attributes['id']])
-                ->all();
-            foreach($findHashtags as $hashtag)
+            foreach($tweet->tweetHashtags as $hashtag)
             {
-                $tempHashtag[] = $hashtag->attributes['hashtag_text'];
+                $tempHashtag[] = $hashtag->hashtag_text;
             }
             $tweetsForShow[] =array_merge($tweet->attributes, array('hashtags' =>$tempHashtag));
         }

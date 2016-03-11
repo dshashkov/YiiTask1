@@ -19,7 +19,7 @@ class TweetLoader extends Component{
 
     /**
      * @param string $search
-     * @return array
+     * @return TweetStructure[]
      */
     public function getPopularTweets($search = 'popular')
     {
@@ -32,15 +32,14 @@ class TweetLoader extends Component{
         $responseFromTwitterApi = $tweet->get('search/tweets', $tweetParams);
 
 
-        return $this->arrayOftweets($responseFromTwitterApi);
-        //return $tweet->get('search/tweets', $tweetParams);
+        return $this->apiResponse2TweeStructures($responseFromTwitterApi);
     }
 
     /**
      * @param array $twitterApiResponse
-     * @return array
+     * @return TweetStructure[]
      */
-    private function arrayOftweets($twitterApiResponse){
+    private function apiResponse2TweeStructures($twitterApiResponse){
 
         $tweetsArray = [];
 

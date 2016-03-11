@@ -15,71 +15,64 @@ use yii\base\Component;
 use app\models\Tweet;
 use yii\base\Exception;
 
-class TweetImporter extends Component{
-
+class TweetImporter extends Component
+{
     /**
-     * @param $unpreparedTweets
-     * @return array
-     * @throws Exception
+     * у данного метод должна быть отдна ответственность сохранять в базу все переданные твиты и больше ничего
+     * название метода кстати как-то не очень говорит о чем тут речь идет. просто save было бы более понятным, и точнее отражало бы суть
+     * зачем в методе tweetImport логика отображения твитов вообще не ясно.
+     * это не ответственность данного метода
+     * @param TweetStructure[] $tweets
+     * @return Tweet[]
+     * @throws \Exception
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\db\Exception
      */
-    public function tweetImport($unpreparedTweets){
-
+    public function save($tweets)
+    {
         $savedTweets =[];
 
         $dbTransaction = Tweet::getDb()->beginTransaction();
+
         try {
-            foreach ($unpreparedTweets as $tweet) {
-
-                /**
-                 * @var TweetStructure $tweet
-                 */
-
-                $this->saveTweet($tweet);
-                $savedTweets[] = [
-                    'tweetText' => $tweet->getTweetText(),
-                    'dateWriten' => $tweet->getDateWriten(),
-                    'hashtags' => $tweet->getHashtags(),
-                ];
-
+            foreach ($tweets as $tweet) {
+                $savedTweets[] = $this->saveTweet($tweet);
             }
             $dbTransaction->commit();
-        }catch(\Exception $e )
-        {
+        } catch( \Exception $e ) {
             $dbTransaction->rollBack();
             throw $e;
         }
 
-        /**
-         * @var TweetShow $tweetShow
-         */
-        $tweetShow = Yii::$app->get('tweetshow');
-        $tweetShow->showSavedTweets($savedTweets);
+        return $savedTweets;
     }
 
 
     /**
-     * @param $tweet
+     * @param TweetStructure $tweet
+     * @return Tweet
      * @throws Exception
      */
-    private function saveTweet($tweet)
+    private function saveTweet(TweetStructure $tweet)
     {
-        /**
-         * @var TweetStructure $tweet
-         */
-        $tweetText = $tweet->getTweetText();
-        $dateWriten = $tweet->getDateWriten();
-        $tweetHashtags = $tweet->getHashtags();
-
-
-
-        $tweetTable = Tweet::createInstanceFromParam($tweetText, $dateWriten);
+        $tweetTable = Tweet::createInstanceFromParam($tweet->getTweetText(), $tweet->getDateWriten());
         if (!$tweetTable->save()) {
             throw new Exception('Ошибка записи в базу данных: Таблица tweet');
         }
 
+        $this->saveHashtags($tweet);
 
+        return $tweetTable;
+    }
+
+    /**
+     * TODO стоит отрефакторить, метод выглядит грязновато.
+     * @param TweetStructure $tweet
+     * @throws Exception
+     */
+    private function saveHashtags(TweetStructure $tweet)
+    {
+        $tweetHashtags = $tweet->getHashtags();
         if (!empty($tweetHashtags))
         {
             foreach ($tweetHashtags as $key) {
@@ -103,6 +96,6 @@ class TweetImporter extends Component{
             }
 
         }
-    }
 
+    }
 }

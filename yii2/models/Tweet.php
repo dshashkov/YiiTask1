@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  *
  * @property TweetHashtag[] $tweetHashtags
  * @property Hashtag[] $hashtagTexts
+ * @method static TweetQuery find()
  */
 class Tweet extends ActiveRecord
 {

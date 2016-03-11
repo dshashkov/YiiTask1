@@ -7,25 +7,31 @@
  */
 namespace app\components;
 
+use app\models\Tweet;
 use yii;
 use yii\base\Component;
 
+/**
+ * TODO остальные методы стоит отрефакторить по тому же приницпе что я сделал в showSavedTweets
+ * Class TweetShow
+ * @package app\components
+ */
 class TweetShow extends Component
 {
     /**
-     * @param array $tweetsForShow
+     * @param Tweet[] $tweets
      */
-    public function showSavedTweets($tweetsForShow)
+    public function showSavedTweets(array $tweets)
     {
-        echo 'Получено и записано в базу данных ' . count($tweetsForShow) . ' твиттов:' . "\n";
-        foreach($tweetsForShow as $key => $value){
+        echo 'Получено и записано в базу данных ' . count($tweets) . ' твиттов:' . "\n";
+        foreach($tweets as $key => $tweet){
             echo "\033[01;31m Твитт #" . ($key + 1) . "\n";
-            echo "\033[01;32mТекст твитта: \033[01;37m" . $value['tweetText'] . "\n";
-            echo "\033[01;32mДата написания твитта: \033[01;37m" . $value['dateWriten'] . "\n";
-            if (count($value['hashtags']) > 0) {
+            echo "\033[01;32mТекст твитта: \033[01;37m" . $tweet->text . "\n";
+            echo "\033[01;32mДата написания твитта: \033[01;37m" . $tweet->date_written . "\n";
+            if (count($tweet['hashtags']) > 0) {
                 echo "\033[01;32mХештеги твита: \033[01;37m" . "\n";
-                foreach ($value['hashtags'] as $hashtag) {
-                    echo '              #' . $hashtag . "\n";
+                foreach ($tweet->tweetHashtags as $hashtag) {
+                    echo '              #' . $hashtag->hashtag_text . "\n";
                 }
             }
             echo "\n";
