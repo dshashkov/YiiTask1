@@ -21,8 +21,7 @@ class TweetLastFinder extends Component{
     public function lastTweetsFind($count){
         $tweetsForJSOM = [];
         $lastTweets = Tweet::find()
-            ->orderBy(['id' => SORT_DESC])
-            ->limit($count)
+            ->byLastOnes($count)
             ->all();
 
 
@@ -30,7 +29,7 @@ class TweetLastFinder extends Component{
         {
             $tempHashtag = [];
             $findHashtags = TweetHashtag::find()
-                ->where(['tweet_id' => $tweet->attributes['id']])
+                ->byId($tweet->attributes['id'])
                 ->all();
             foreach($findHashtags as $hashtag)
             {
@@ -41,7 +40,7 @@ class TweetLastFinder extends Component{
         }
         $json = (json_encode($tweetsForJSOM));
 
-        echo $json;
+        echo $json."\n";
     }
 
 }

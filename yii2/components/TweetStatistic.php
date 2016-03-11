@@ -22,7 +22,7 @@ class TweetStatistic extends Component{
         $tweetsID= [];
 
         $tweets = Tweet::find()
-            ->where(['like','date_imported',$dateForSearch])
+            ->byDate($dateForSearch)
             ->all();
 
         foreach($tweets as $key)
@@ -45,7 +45,7 @@ class TweetStatistic extends Component{
         $hashtagsFounded =[];
 
         $hashtags = TweetHashtag::find()
-            ->where(['tweet_id' => $tweetsID])
+            ->byId($tweetsID)
             ->all();
         foreach($hashtags as $key)
         {

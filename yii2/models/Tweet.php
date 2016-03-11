@@ -67,7 +67,14 @@ class Tweet extends ActiveRecord
             'date_imported' => 'Date Imported',
         ];
     }
-
+    /**
+     * @inheritdoc
+     * @return TweetQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new TweetQuery(get_called_class());
+    }
     /**
      * @return \yii\db\ActiveQuery
      */

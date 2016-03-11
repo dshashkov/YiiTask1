@@ -20,7 +20,7 @@ class TweetImporter extends Component{
     /**
      * @param $unpreparedTweets
      * @return array
-     * @throws Exception
+     * @throws \Exception
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\db\Exception
      */

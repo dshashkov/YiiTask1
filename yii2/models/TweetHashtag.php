@@ -62,6 +62,14 @@ class TweetHashtag extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     * @return TweetHashtagQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new TweetHashtagQuery(get_called_class());
+    }
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getHashtagText()
