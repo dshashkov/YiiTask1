@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "hashtag".
@@ -12,7 +13,7 @@ use Yii;
  * @property TweetHashtag[] $tweetHashtags
  * @property Tweet[] $tweets
  */
-class Hashtag extends \yii\db\ActiveRecord
+class Hashtag extends ActiveRecord
 {
     /**
      * @param $hashtag
