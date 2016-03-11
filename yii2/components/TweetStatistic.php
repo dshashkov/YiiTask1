@@ -18,42 +18,26 @@ class TweetStatistic extends Component{
      * @param string $dateForSearch
      * @return array
      */
-    public function statisticByDate($dateForSearch){
-        $tweetsID= [];
+    public function statisticByDate($dateForSearch)
+    {
+        $hashtagFounded = [];
 
         $tweets = Tweet::find()
             ->byDate($dateForSearch)
             ->all();
 
-        foreach($tweets as $key)
-        {
-            $tweetsID[] = $key->attributes['id'];
+        foreach ($tweets as $tweet) {
+            foreach ($tweet->hashtagTexts as $hashtagText) {
+                $hashtagFounded[] = $hashtagText->attributes['text'];
+            }
         }
-
-
-       return $this->hashtagStatistic(
-           $this->findAllHashtags($tweetsID)
-       );
+        return $this->hashtagStatistic($hashtagFounded);
     }
 
     /**
-     * @param $tweetsID
+     * @param $hashtags
      * @return array
      */
-    private function findAllHashtags ($tweetsID){
-
-        $hashtagsFounded =[];
-
-        $hashtags = TweetHashtag::find()
-            ->byId($tweetsID)
-            ->all();
-        foreach($hashtags as $key)
-        {
-            $hashtagsFounded[] = $key->attributes['hashtag_text'];
-        }
-        return  $hashtagsFounded;
-    }
-
     private function hashtagStatistic($hashtags){
         $statistic = array_count_values($hashtags);
         arsort($statistic);

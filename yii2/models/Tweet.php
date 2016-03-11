@@ -19,6 +19,7 @@ use yii\db\ActiveRecord;
  */
 class Tweet extends ActiveRecord
 {
+
     /**
      * @param $tweetText
      * @param $dateWriten

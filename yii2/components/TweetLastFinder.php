@@ -8,7 +8,6 @@
 namespace app\components;
 
 use app\models\Tweet;
-use app\models\TweetHashtag;
 use Yii;
 use yii\base\Component;
 
@@ -19,27 +18,23 @@ class TweetLastFinder extends Component{
      * @param int $count
      */
     public function lastTweetsFind($count){
-        $tweetsForJSOM = [];
+
+        $tweetsForJSON = [];
         $lastTweets = Tweet::find()
             ->byLastOnes($count)
             ->all();
 
 
-        foreach($lastTweets as $tweet)
+        foreach ($lastTweets as $lastTweet)
         {
             $tempHashtag = [];
-            $findHashtags = TweetHashtag::find()
-                ->byId($tweet->attributes['id'])
-                ->all();
-            foreach($findHashtags as $hashtag)
+            foreach($lastTweet->hashtagTexts as $hashtagText)
             {
-                $tempHashtag[] = $hashtag->attributes['hashtag_text'];
+                $tempHashtag[] = $hashtagText->attributes['text'];
             }
-            $tweetsForJSOM[] =array_merge($tweet->attributes, array('hashtags' =>$tempHashtag));
-
+            $tweetsForJSON[] = array_merge($lastTweet->attributes, ['hashtag' => $tempHashtag]);
         }
-        $json = (json_encode($tweetsForJSOM));
-
+        $json = (json_encode($tweetsForJSON));
         echo $json."\n";
     }
 

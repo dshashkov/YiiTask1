@@ -7,10 +7,9 @@
  */
 namespace app\components;
 
+use app\models\Hashtag;
 use Yii;
 use yii\base\Component;
-use app\models\Tweet;
-use app\models\TweetHashtag;
 
 class TweetHashtagFinder extends Component{
 
@@ -19,34 +18,23 @@ class TweetHashtagFinder extends Component{
      * @throws \yii\base\InvalidConfigException
      */
     public function findTweetByHashtag($hashtagForSearch){
-        $idForSearch = [];
-
-        $tweetsHashtags = TweetHashtag::find()
-            ->byText($hashtagForSearch)
-            ->all();
-
-        foreach($tweetsHashtags as $founded)
-        {
-            $idForSearch[]=(int)$founded->attributes['tweet_id'];
-        }
-        $tweetsByHashtag = Tweet::find()
-            ->byId($idForSearch)
-            ->all();
-
         $tweetsForShow = [];
-        foreach ($tweetsByHashtag as $tweet)
-        {
-            $tempHashtag = [];
-            $findHashtags = TweetHashtag::find()
-                ->byId($tweet->attributes['id'])
-                ->all();
-            foreach($findHashtags as $hashtag)
-            {
-                $tempHashtag[] = $hashtag->attributes['hashtag_text'];
-            }
-            $tweetsForShow[] =array_merge($tweet->attributes, array('hashtags' =>$tempHashtag));
-        }
+        $hashtags = Hashtag::find()
+            ->byHashtag($hashtagForSearch)
+            ->all();
 
+        foreach($hashtags as $hashtag)
+        {
+            foreach($hashtag->tweets as $tweet)
+            {
+                $tempHashtags = [];
+                foreach($tweet->hashtagTexts as $hashtagText)
+                {
+                    $tempHashtags[] = $hashtagText->attributes['text'];
+                }
+                $tweetsForShow[] = array_merge($tweet->attributes,['hashtags' => $tempHashtags]);
+            }
+        }
         /** @var TweetShow $tweetShow */
         $tweetShow = Yii::$app->get('tweetshow');
         $tweetShow->showTweetsByHashtags($tweetsForShow,$hashtagForSearch);
