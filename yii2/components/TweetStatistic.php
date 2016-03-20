@@ -16,15 +16,15 @@ use yii\base\Component;
 class TweetStatistic extends Component
 {
     /**
-     * @param string $dateForSearch
+     * @param $dateAndTimeForSearch
      * @return array
      */
-    public function statisticByDate($dateForSearch)
+    public function statisticByDate($dateAndTimeForSearch)
     {
         $hashtagFounded = [];
 
         $tweets = Tweet::find()
-            ->byDate($dateForSearch)
+            ->byDate($dateAndTimeForSearch)
             ->hashtagsViaJunctionTable()
             ->all();
 
