@@ -58,27 +58,40 @@ class TweetImporter extends Component
         }
 
         if (!empty($tweetHashtags)) {
-            foreach ($tweetHashtags as $tweetHashtag) {
-                $hashtagFromDb = Hashtag::findOne($tweetHashtag);
+            $this->importHashtags($tweet,$tweetHashtags);
+        }
+    }
 
-                if (empty($hashtagFromDb)) {
-                    $hashtag = Hashtag::createInstanceFromParam($tweetHashtag);
 
-                    if (!$hashtag->save()) {
-                        throw new Exception('Ошибка записи в базу данных: Таблица hashtag');
-                    }
-                    if ($tweet->validate() && $hashtag->validate()) {
-                        $tweet->link('hashtagTexts', $hashtag);
-                    } else {
-                        throw new Exception('Ошибка валидации');
-                    }
+    /**
+     * @param Tweet $tweet
+     * @param array $tweetHashtags
+     * @throws Exception
+     */
+    private function importHashtags(Tweet $tweet, array $tweetHashtags)
+    {
+        foreach ($tweetHashtags as $tweetHashtag) {
+            $hashtagFromDb = Hashtag::findOne($tweetHashtag);
+
+            if (empty($hashtagFromDb)) {
+                $hashtag = Hashtag::createInstanceFromParam($tweetHashtag);
+
+                if (!$hashtag->save()) {
+                    throw new Exception('Ошибка записи в базу данных: Таблица hashtag');
+                }
+                if ($tweet->validate() && $hashtag->validate()) {
+                    $tweet->link('hashtagTexts', $hashtag);
                 } else {
-                    /** @var Hashtag $hashtagFromDb */
-                    if ($tweet->validate() && $hashtagFromDb->validate()) {
-                        $tweet->link('hashtagTexts', $hashtagFromDb);
-                    } else {
-                        throw new Exception('Ошибка валидации');
-                    }
+                    throw new Exception('Ошибка валидации');
+                }
+            } else {
+                /**
+                 * @var Hashtag $hashtagFromDb
+                 */
+                if ($tweet->validate() && $hashtagFromDb->validate()) {
+                    $tweet->link('hashtagTexts', $hashtagFromDb);
+                } else {
+                    throw new Exception('Ошибка валидации');
                 }
             }
         }
