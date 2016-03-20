@@ -1,108 +1,86 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: dshash
- * Date: 27.02.16
- * Time: 23:42
+ * This component used for importing TweetStructure[] into Database
+ *
+ * @author Shashkov Denis
+ * @date 20.03.16
  */
+
 namespace app\components;
 
+
 use app\models\Hashtag;
-use app\models\TweetHashtag;
 use app\models\TweetStructure;
 use Yii;
 use yii\base\Component;
 use app\models\Tweet;
 use yii\base\Exception;
 
-class TweetImporter extends Component{
-
+class TweetImporter extends Component
+{
     /**
-     * @param $unpreparedTweets
-     * @return array
+     * @param TweetStructure[] $tweets
+     * @return bool
      * @throws \Exception
-     * @throws \yii\base\InvalidConfigException
      * @throws \yii\db\Exception
      */
-    public function tweetImport($unpreparedTweets){
-
-        $savedTweets =[];
-
+    public function tweetImport(array $tweets)
+    {
         $dbTransaction = Tweet::getDb()->beginTransaction();
         try {
-            foreach ($unpreparedTweets as $tweet) {
-
-                /**
-                 * @var TweetStructure $tweet
-                 */
+            foreach ($tweets as $tweet) {
 
                 $this->saveTweet($tweet);
-                $savedTweets[] = [
-                    'tweetText' => $tweet->getTweetText(),
-                    'dateWriten' => $tweet->getDateWriten(),
-                    'hashtags' => $tweet->getHashtags(),
-                ];
-
             }
             $dbTransaction->commit();
-        }catch(\Exception $e )
-        {
+            return true;
+        } catch (\Exception $e) {
             $dbTransaction->rollBack();
             throw $e;
         }
-
-        /**
-         * @var TweetShow $tweetShow
-         */
-        $tweetShow = Yii::$app->get('tweetshow');
-        $tweetShow->showSavedTweets($savedTweets);
     }
 
 
     /**
-     * @param $tweet
+     * @param TweetStructure $tweetStructure
      * @throws Exception
      */
-    private function saveTweet($tweet)
+    private function saveTweet(TweetStructure $tweetStructure)
     {
-        /**
-         * @var TweetStructure $tweet
-         */
-        $tweetText = $tweet->getTweetText();
-        $dateWriten = $tweet->getDateWriten();
-        $tweetHashtags = $tweet->getHashtags();
+        $tweetText       = $tweetStructure->getTweetText();
+        $tweetDateWriten = $tweetStructure->getDateWriten();
+        $tweetHashtags   = $tweetStructure->getHashtags();
 
+        $tweet = Tweet::createInstanceFromParam($tweetText, $tweetDateWriten);
 
-
-        $tweetTable = Tweet::createInstanceFromParam($tweetText, $dateWriten);
-        if (!$tweetTable->save()) {
+        if (!$tweet->save()) {
             throw new Exception('Ошибка записи в базу данных: Таблица tweet');
         }
 
+        if (!empty($tweetHashtags)) {
+            foreach ($tweetHashtags as $tweetHashtag) {
+                $hashtagFromDb = Hashtag::findOne($tweetHashtag);
 
-        if (!empty($tweetHashtags))
-        {
-            foreach ($tweetHashtags as $key) {
-                $hashtagFromDb = Hashtag::findOne($key);
-                if (empty($hashtagFromDb))
-                {
-                    $hashtagTable = Hashtag::createInstanceFromParam($key);
-                    if (!$hashtagTable->save())
-                    {
+                if (empty($hashtagFromDb)) {
+                    $hashtag = Hashtag::createInstanceFromParam($tweetHashtag);
+
+                    if (!$hashtag->save()) {
                         throw new Exception('Ошибка записи в базу данных: Таблица hashtag');
                     }
-                }
-                $tweetLastId = Tweet::find()
-                    ->max('id');
-
-                $TweetHashtagTable = TweetHashtag::createInstanceFromParam($tweetLastId,$key);
-                if (!$TweetHashtagTable->save())
-                {
-                    throw new Exception('Ошибка записи в базу данных: Таблица tweet_hashtag');
+                    if ($tweet->validate() && $hashtag->validate()) {
+                        $tweet->link('hashtagTexts', $hashtag);
+                    } else {
+                        throw new Exception('Ошибка валидации');
+                    }
+                } else {
+                    /** @var Hashtag $hashtagFromDb */
+                    if ($tweet->validate() && $hashtagFromDb->validate()) {
+                        $tweet->link('hashtagTexts', $hashtagFromDb);
+                    } else {
+                        throw new Exception('Ошибка валидации');
+                    }
                 }
             }
-
         }
     }
-
 }

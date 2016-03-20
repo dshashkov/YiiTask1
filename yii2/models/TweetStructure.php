@@ -1,36 +1,36 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: dshash
- * Date: 28.02.16
- * Time: 20:29
+ * Model which describes structure of the each tweet
+ *
+ * @author Shashkov Denis
+ * @date 20.03.16
  */
 
 namespace app\models;
 
+
 use yii;
-use yii\base\Model;
 
-class TweetStructure extends Model{
-
+class TweetStructure
+{
     private $tweetText;
     private $dateWriten;
     private $hashtags;
 
+
     /**
      * TweetStructure constructor.
-     * @param array $hashtags
-     * @param $dateWriten
      * @param $tweetText
-     * @param array $config
+     * @param $dateWriten
+     * @param array $hashtags
      */
-    public function __construct($tweetText, $dateWriten, $hashtags, $config = [])
+    public function __construct($tweetText, $dateWriten, $hashtags)
     {
-        $this->tweetText = $tweetText;
-        $this->dateWriten = $dateWriten;
-        $this->hashtags = $hashtags;
-        parent::__construct($config);
+        $this->tweetText  = $tweetText;
+        $this->dateWriten = date('Y-m-d G:i:s', strtotime($dateWriten));
+        $this->hashtags   = $hashtags;
     }
+
 
     /**
      * @return mixed
@@ -40,6 +40,7 @@ class TweetStructure extends Model{
         return $this->tweetText;
     }
 
+
     /**
      * @return mixed
      */
@@ -47,6 +48,7 @@ class TweetStructure extends Model{
     {
         return $this->dateWriten;
     }
+
 
     /**
      * @return mixed

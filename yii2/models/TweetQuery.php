@@ -1,6 +1,8 @@
 <?php
 
 namespace app\models;
+
+
 use yii\db\ActiveQuery;
 
 /**
@@ -11,16 +13,6 @@ use yii\db\ActiveQuery;
  */
 class TweetQuery extends ActiveQuery
 {
-
-    /**
-     * @param $tweetID
-     * @return $this
-     */
-    public  function byId($tweetID)
-    {
-        return $this->where(['id' => $tweetID]);
-    }
-
     /**
      * @param $count
      * @return $this
@@ -28,9 +20,9 @@ class TweetQuery extends ActiveQuery
     public function byLastOnes($count)
     {
         return $this->orderBy(['id' => SORT_DESC])
-            ->with('tweetHashtags')
             ->limit($count);
     }
+
 
     /**
      * @param $date
@@ -38,8 +30,15 @@ class TweetQuery extends ActiveQuery
      */
     public function byDate($date)
     {
-        return $this->where(['like','date_imported',$date])
-            ->with('tweetHashtags');
+        return $this->andWhere(['<','date_imported', $date]);
     }
 
+
+    /**
+     * @return $this
+     */
+    public function hashtagsViaJunctionTable()
+    {
+        return $this->with('hashtagTexts');
+    }
 }

@@ -1,19 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: dshash
- * Date: 09.03.16
- * Time: 16:46
+ * This component used for build statistic by #hashtags
+ * For statistic used dependence of #hashtags and dates of import tweets into Database
+ *
+ * @author Shashkov Denis
+ * @date 20.03.16
  */
+
 namespace app\components;
 
+
 use app\models\Tweet;
-use app\models\TweetHashtag;
 use yii\base\Component;
 
-
-class TweetStatistic extends Component{
-
+class TweetStatistic extends Component
+{
     /**
      * @param string $dateForSearch
      * @return array
@@ -24,6 +25,7 @@ class TweetStatistic extends Component{
 
         $tweets = Tweet::find()
             ->byDate($dateForSearch)
+            ->hashtagsViaJunctionTable()
             ->all();
 
         foreach ($tweets as $tweet) {
@@ -31,16 +33,21 @@ class TweetStatistic extends Component{
                 $hashtagFounded[] = $hashtagText->attributes['text'];
             }
         }
+
         return $this->hashtagStatistic($hashtagFounded);
     }
+
 
     /**
      * @param $hashtags
      * @return array
      */
-    private function hashtagStatistic($hashtags){
+    private function hashtagStatistic($hashtags)
+    {
         $statistic = array_count_values($hashtags);
+
         arsort($statistic);
+
         return $statistic;
     }
 }

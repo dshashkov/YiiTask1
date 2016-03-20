@@ -25,8 +25,8 @@ class m160214_135458_create_tables_for_twitter_api extends Migration
         $this->createTable('tweet',[
             'id' => Schema::TYPE_PK,
             'text' => Schema::TYPE_STRING.' NOT NULL',
-            'date_written' => Schema::TYPE_STRING.' NOT NULL',
-            'date_imported' => Schema::TYPE_STRING.' NOT NULL',
+            'date_written' => Schema::TYPE_TIMESTAMP.' NOT NULL',
+            'date_imported' => Schema::TYPE_TIMESTAMP.' NOT NULL',
         ],"ENGINE=InnoDB DEFAULT CHARSET=utf8");
         $this->createTable('hashtag',[
             'text' => $this->string(),

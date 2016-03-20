@@ -3,8 +3,8 @@
 namespace app\models;
 
 use Yii;
-use DateTime;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tweet".
@@ -19,20 +19,17 @@ use yii\db\ActiveRecord;
  */
 class Tweet extends ActiveRecord
 {
-
     /**
-     * @param $tweetText
+     * @param $text
      * @param $dateWriten
      * @return Tweet
      */
-    public static function createInstanceFromParam($tweetText, $dateWriten)
+    public static function createInstanceFromParam($text, $dateWriten)
     {
-        $dateImportedFormat = new DateTime('now');
-        $dateImportedForSave  = $dateImportedFormat->format('F j, Y-m-d H:i:s');
         $tweet = new Tweet();
-        $tweet->text = $tweetText;
+        $tweet->text = $text;
         $tweet->date_written = $dateWriten;
-        $tweet->date_imported = $dateImportedForSave;
+        $tweet->date_imported = new Expression('NOW()');
         return $tweet;
     }
 
@@ -50,7 +47,7 @@ class Tweet extends ActiveRecord
     public function rules()
     {
         return [
-            [['text', 'date_written', 'date_imported'], 'required'],
+            [['text'], 'required'],
             [['date_written', 'date_imported'], 'safe'],
             [['text'], 'string', 'max' => 255]
         ];
