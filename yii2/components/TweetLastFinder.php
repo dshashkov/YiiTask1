@@ -4,11 +4,10 @@
  * Count of tweets according to received $count
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\components;
-
 
 use app\models\Tweet;
 use Yii;
@@ -18,16 +17,27 @@ class TweetLastFinder extends Component
 {
     /**
      * @param int $count
+     *
      * @return array
      */
-    public function lastTweetsFind($count)
+    public function findLastTweets($count)
     {
-        $tweetsForJSON = [];
-
         $lastTweets = Tweet::find()
             ->byLastOnes($count)
             ->hashtagsViaJunctionTable()
             ->all();
+
+        return $this->composeTweetsForJSON($lastTweets);
+    }
+
+    /**
+     * @param Tweet[] $lastTweets
+     *
+     * @return array
+     */
+    private function composeTweetsForJSON(array $lastTweets)
+    {
+        $tweetsForJSON = [];
 
         foreach ($lastTweets as $lastTweet) {
             $tempHashtag = [];
@@ -35,7 +45,7 @@ class TweetLastFinder extends Component
             foreach ($lastTweet->hashtagTexts as $hashtagText) {
                 $tempHashtag[] = $hashtagText->attributes['text'];
             }
-            $tweetsForJSON[] = array_merge($lastTweet->attributes, ['hashtag' => $tempHashtag]);
+            $tweetsForJSON[] = array_merge($lastTweet->attributes, ['hashtags' => $tempHashtag]);
         }
 
         return $tweetsForJSON;

@@ -6,13 +6,13 @@
  * Display built statistic into console by TweetShow component
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 namespace app\commands;
 
-
 use app\components\TweetShow;
 use app\components\TweetStatistic;
+use DateTime;
 use Yii;
 use yii\console\Controller;
 
@@ -30,22 +30,30 @@ class TweetsStatisticController extends Controller
          */
         $tweetShow = Yii::$app->get('tweetshow');
 
-        $tweetShow->statisticInformMessage();
+        $tweetShow->showStatisticInformMessage();
 
-        $dateAndTimeForSearch = fgets($stdin);
+        $enteredData = fgets($stdin);
+
         try {
-            strtotime($dateAndTimeForSearch);
+            $dateTime = $this->convertDateTime($enteredData);
+
+            /**
+             * @var TweetStatistic $tweetStatistic
+             */
+            $tweetStatistic = Yii::$app->get('tweetstatistic');
+
+            $statistic = $tweetStatistic->getHashtagsStatisticByDate($dateTime);
+
+            $tweetShow->statisticByHashtags($statistic, $dateTime);
         } catch (\Exception $e) {
-            echo "\033[01;31mНеверный формат даты!!!\n";
-            die();
+            $tweetShow->wrongFormatMessage();
         }
-        /**
-         * @var TweetStatistic $tweetStatistic
-         */
-        $tweetStatistic = Yii::$app->get('tweetstatistic');
+    }
 
-        $statistic = $tweetStatistic->statisticByDate($dateAndTimeForSearch);
+    private function convertDateTime($enteredData)
+    {
+        $dateTime = new DateTime($enteredData);
 
-        $tweetShow->statisticByHashtags($statistic, $dateAndTimeForSearch);
+        return $dateTime->format('Y-m-d H:i:s');
     }
 }

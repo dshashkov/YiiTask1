@@ -8,11 +8,10 @@
  * Default
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\components;
-
 
 use app\models\TweetStructure;
 use Yii;
@@ -23,9 +22,9 @@ class TweetLoader extends Component
 {
     public $tweetConfig;
 
-
     /**
      * @param string $search
+     *
      * @return TweetStructure[]
      */
     public function getPopularTweets($search = 'popular')
@@ -39,28 +38,29 @@ class TweetLoader extends Component
         $tweet = new TwitterOAuth($this->tweetConfig);
 
         $twitterApiResponse = $tweet->get('search/tweets', $tweetParams);
+        $parsedTweets       = $this->parseTweetsData($twitterApiResponse);
 
-        $parsedTweets = $this->parseTweetsData($twitterApiResponse);
-
-        return $this->arrayOftweets($parsedTweets);
+        return $this->composeTweets($parsedTweets);
     }
 
     /**
      * @param array $parsedTweets
+     *
      * @return TweetStructure[]
      */
-    private function arrayOftweets(array $parsedTweets)
+    private function composeTweets(array $parsedTweets)
     {
-        $tweetsArray = [];
+        $composedTweets = [];
 
         foreach ($parsedTweets as $parsedTweet) {
-            $tweetsArray[] = new TweetStructure(
+            $composedTweets[] = new TweetStructure(
                 $parsedTweet['text'],
                 $parsedTweet['dateWriten'],
                 $parsedTweet['hashtags']
             );
         }
-        return $tweetsArray;
+
+        return $composedTweets;
     }
 
     /**
@@ -95,6 +95,7 @@ class TweetLoader extends Component
      *     "text": "Aggressive Ponytail #freebandnames",
      *
      * @param array $twitterApiResponse
+     *
      * @return array
      */
     private function parseTweetsData(array $twitterApiResponse)
@@ -107,11 +108,11 @@ class TweetLoader extends Component
             $text               = $tweet['text'];
             $dateWriten         = $tweet['created_at'];
             $hashtagsAndIndices = $tweet['entities']['hashtags'];
-            $hashtags = [];
+            $hashtags           = [];
 
             foreach ($hashtagsAndIndices as $hastagAndIndices) {
                 foreach ($hastagAndIndices as $key => $value) {
-                    $key == 'text' ? $hashtags[] = $value : null;
+                    $key == 'text' ? $hashtags[] = $value : NULL;
                 }
             }
             $parsedTweets[] = [

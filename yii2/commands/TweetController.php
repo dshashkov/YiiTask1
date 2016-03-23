@@ -6,11 +6,10 @@
  * Display imported tweets into console by TweetShow component
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\commands;
-
 
 use app\components\TweetImporter;
 use app\components\TweetLoader;
@@ -22,23 +21,20 @@ class TweetController extends Controller
 {
     /**
      * @param string $search
+     *
      * @throws yii\base\InvalidConfigException
      */
     public function actionIndex($search = 'popular')
     {
         /**
-         * @var TweetLoader $tweetLoader
-         */
-        $tweetLoader = Yii::$app->get('tweetloader');
-
-        /**
+         * @var TweetLoader   $tweetLoader
          * @var TweetImporter $tweetImporter
          */
+        $tweetLoader   = Yii::$app->get('tweetloader');
         $tweetImporter = Yii::$app->get('tweetimporter');
+        $tweetsArray   = $tweetLoader->getPopularTweets($search);
 
-        $tweetsArray = $tweetLoader->getPopularTweets($search);
-
-        if ($tweetImporter->tweetImport($tweetsArray)) {
+        if ($tweetImporter->importTweet($tweetsArray)) {
             /**
              * @var TweetShow $tweetShow
              */

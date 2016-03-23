@@ -5,12 +5,13 @@
  * Display founded tweets into console by TweetShow component
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\commands;
 
 use app\components\TweetHashtagFinder;
+use app\components\TweetShow;
 use Yii;
 use yii\console\Controller;
 
@@ -18,14 +19,22 @@ class TweetsByHashtagController extends Controller
 {
     /**
      * @param $hashtagForSearch
+     *
      * @throws \yii\base\InvalidConfigException
-     * @internal param string $hashtag
      */
     public function actionIndex($hashtagForSearch)
     {
-        /** @var TweetHashtagFinder $tweetHashtagFinder */
+        /**
+         * @var TweetHashtagFinder $tweetHashtagFinder
+         */
         $tweetHashtagFinder = Yii::$app->get('tweethashtagfinder');
+        $tweets             = $tweetHashtagFinder->findTweetByHashtag($hashtagForSearch);
 
-        $tweetHashtagFinder->findTweetByHashtag($hashtagForSearch);
+        /**
+         * @var TweetShow $tweetShow
+         */
+        $tweetShow = Yii::$app->get('tweetshow');
+
+        $tweetShow->showTweetsByHashtags($tweets, $hashtagForSearch);
     }
 }

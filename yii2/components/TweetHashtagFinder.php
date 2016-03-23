@@ -3,7 +3,7 @@
  * This component used for finding tweets which include assigned #hashtag
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\components;
@@ -14,18 +14,30 @@ use yii\base\Component;
 
 class TweetHashtagFinder extends Component
 {
+
     /**
-     * @param string $hashtagForSearch
-     * @throws \yii\base\InvalidConfigException
+     * @param $hashtagForSearch
+     *
+     * @return array
      */
     public function findTweetByHashtag($hashtagForSearch)
     {
-        $tweetsForShow = [];
-
         $hashtags = Hashtag::find()
             ->byHashtag($hashtagForSearch)
             ->tweetsViaJunctionTable()
             ->all();
+
+        return $this->composeTweets($hashtags);
+    }
+
+    /**
+     * @param Hashtag[] $hashtags
+     *
+     * @return array
+     */
+    private function composeTweets(array $hashtags)
+    {
+        $tweets = [];
 
         foreach ($hashtags as $hashtag) {
             foreach ($hashtag->tweets as $tweet) {
@@ -33,12 +45,10 @@ class TweetHashtagFinder extends Component
                 foreach ($tweet->hashtagTexts as $hashtagText) {
                     $tempHashtags[] = $hashtagText->attributes['text'];
                 }
-                $tweetsForShow[] = array_merge($tweet->attributes, ['hashtags' => $tempHashtags]);
+                $tweets[] = array_merge($tweet->attributes, ['hashtags' => $tempHashtags]);
             }
         }
-        /** @var TweetShow $tweetShow */
-        $tweetShow = Yii::$app->get('tweetshow');
 
-        $tweetShow->showTweetsByHashtags($tweetsForShow, $hashtagForSearch);
+        return $tweets;
     }
 }

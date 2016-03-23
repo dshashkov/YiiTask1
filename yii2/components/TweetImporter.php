@@ -3,11 +3,10 @@
  * This component used for importing TweetStructure[] into Database
  *
  * @author Shashkov Denis
- * @date 20.03.16
+ * @date   20.03.16
  */
 
 namespace app\components;
-
 
 use app\models\Hashtag;
 use app\models\TweetStructure;
@@ -20,11 +19,12 @@ class TweetImporter extends Component
 {
     /**
      * @param TweetStructure[] $tweets
+     *
      * @return bool
      * @throws \Exception
      * @throws \yii\db\Exception
      */
-    public function tweetImport(array $tweets)
+    public function importTweet(array $tweets)
     {
         $dbTransaction = Tweet::getDb()->beginTransaction();
         try {
@@ -33,16 +33,18 @@ class TweetImporter extends Component
                 $this->saveTweet($tweet);
             }
             $dbTransaction->commit();
+
             return true;
         } catch (\Exception $e) {
             $dbTransaction->rollBack();
+
             throw $e;
         }
     }
 
-
     /**
      * @param TweetStructure $tweetStructure
+     *
      * @throws Exception
      */
     private function saveTweet(TweetStructure $tweetStructure)
@@ -58,14 +60,14 @@ class TweetImporter extends Component
         }
 
         if (!empty($tweetHashtags)) {
-            $this->importHashtags($tweet,$tweetHashtags);
+            $this->importHashtags($tweet, $tweetHashtags);
         }
     }
-
 
     /**
      * @param Tweet $tweet
      * @param array $tweetHashtags
+     *
      * @throws Exception
      */
     private function importHashtags(Tweet $tweet, array $tweetHashtags)
@@ -79,20 +81,13 @@ class TweetImporter extends Component
                 if (!$hashtag->save()) {
                     throw new Exception('Ошибка записи в базу данных: Таблица hashtag');
                 }
-                if ($tweet->validate() && $hashtag->validate()) {
-                    $tweet->link('hashtagTexts', $hashtag);
-                } else {
-                    throw new Exception('Ошибка валидации');
-                }
+
+                $tweet->link('hashtagTexts', $hashtag);
             } else {
                 /**
                  * @var Hashtag $hashtagFromDb
                  */
-                if ($tweet->validate() && $hashtagFromDb->validate()) {
-                    $tweet->link('hashtagTexts', $hashtagFromDb);
-                } else {
-                    throw new Exception('Ошибка валидации');
-                }
+                $tweet->link('hashtagTexts', $hashtagFromDb);
             }
         }
     }
