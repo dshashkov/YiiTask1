@@ -8,23 +8,25 @@ use yii\db\ActiveRecord;
 /**
  * This is the model class for table "hashtag".
  *
- * @property string $text
+ * @property string  $text
  *
- * @property TweetHashtag[] $tweetHashtags
  * @property Tweet[] $tweets
  */
 class Hashtag extends ActiveRecord
 {
     /**
      * @param $hashtag
+     *
      * @return Hashtag
      */
     public static function createInstanceFromParam($hashtag)
     {
-        $hashtagTable = new Hashtag();
+        $hashtagTable       = new Hashtag();
         $hashtagTable->text = $hashtag;
+
         return $hashtagTable;
     }
+
     /**
      * @inheritdoc
      */
@@ -52,14 +54,6 @@ class Hashtag extends ActiveRecord
         return [
             'text' => 'Text',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTweetHashtags()
-    {
-        return $this->hasMany(TweetHashtag::className(), ['hashtag_text' => 'text']);
     }
 
     /**

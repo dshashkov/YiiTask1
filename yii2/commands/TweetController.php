@@ -31,16 +31,16 @@ class TweetController extends Controller
          * @var TweetImporter $tweetImporter
          */
         $tweetLoader   = Yii::$app->get('tweetloader');
+        $tweets        = $tweetLoader->getPopularTweets($search);
         $tweetImporter = Yii::$app->get('tweetimporter');
-        $tweetsArray   = $tweetLoader->getPopularTweets($search);
 
-        if ($tweetImporter->importTweet($tweetsArray)) {
+        if ($tweetImporter->importTweet($tweets)) {
             /**
              * @var TweetShow $tweetShow
              */
             $tweetShow = Yii::$app->get('tweetshow');
 
-            $tweetShow->showSavedTweets($tweetsArray);
+            $tweetShow->showSavedTweets($tweets);
         }
     }
 }

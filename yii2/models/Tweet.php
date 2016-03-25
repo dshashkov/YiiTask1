@@ -9,12 +9,11 @@ use yii\db\Expression;
 /**
  * This is the model class for table "tweet".
  *
- * @property integer $id
- * @property string $text
- * @property string $date_written
- * @property string $date_imported
+ * @property integer   $id
+ * @property string    $text
+ * @property string    $date_written
+ * @property string    $date_imported
  *
- * @property TweetHashtag[] $tweetHashtags
  * @property Hashtag[] $hashtagTexts
  */
 class Tweet extends ActiveRecord
@@ -22,14 +21,16 @@ class Tweet extends ActiveRecord
     /**
      * @param $text
      * @param $dateWriten
+     *
      * @return Tweet
      */
     public static function createInstanceFromParam($text, $dateWriten)
     {
-        $tweet = new Tweet();
-        $tweet->text = $text;
-        $tweet->date_written = $dateWriten;
+        $tweet                = new Tweet();
+        $tweet->text          = $text;
+        $tweet->date_written  = $dateWriten;
         $tweet->date_imported = new Expression('NOW()');
+
         return $tweet;
     }
 
@@ -59,12 +60,13 @@ class Tweet extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'text' => 'Text',
-            'date_written' => 'Date Written',
+            'id'            => 'ID',
+            'text'          => 'Text',
+            'date_written'  => 'Date Written',
             'date_imported' => 'Date Imported',
         ];
     }
+
     /**
      * @inheritdoc
      * @return TweetQuery the active query used by this AR class.
@@ -72,13 +74,6 @@ class Tweet extends ActiveRecord
     public static function find()
     {
         return new TweetQuery(get_called_class());
-    }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTweetHashtags()
-    {
-        return $this->hasMany(TweetHashtag::className(), ['tweet_id' => 'id']);
     }
 
     /**

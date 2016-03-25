@@ -2,19 +2,20 @@
 
 namespace app\models;
 
-
 use yii\db\ActiveQuery;
 
 /**
  * This is the ActiveQuery class for [[Tweet]].
- * @method Tweet[] all($db = null)
- * @method Tweet one($db = null)
+ * @method Tweet[] all($db = NULL)
+ * @method Tweet one($db = NULL)
+ *
  * @see Tweet
  */
 class TweetQuery extends ActiveQuery
 {
     /**
      * @param $count
+     *
      * @return $this
      */
     public function byLastOnes($count)
@@ -23,16 +24,16 @@ class TweetQuery extends ActiveQuery
             ->limit($count);
     }
 
-
     /**
-     * @param $date
+     * @param $fromDateTime
+     * @param $toDateTime
+     *
      * @return $this
      */
-    public function byDate($date)
+    public function byDate($fromDateTime, $toDateTime)
     {
-        return $this->andWhere(['<','date_imported', $date]);
+        return $this->andWhere(['between', 'date_imported', $fromDateTime, $toDateTime]);
     }
-
 
     /**
      * @return $this

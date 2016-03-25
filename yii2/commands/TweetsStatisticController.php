@@ -18,41 +18,76 @@ use yii\console\Controller;
 
 class TweetsStatisticController extends Controller
 {
+
     /**
+     * @param string $between
+     *
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionIndex()
+    public function actionIndex($between = 'fromBegin')
     {
-        $stdin = fopen("php://stdin", "r");
-
         /**
-         * @var TweetShow $tweetShow
+         * @var TweetShow      $tweetShow
+         * @var TweetStatistic $tweetStatistic
          */
-        $tweetShow = Yii::$app->get('tweetshow');
+        $tweetShow      = Yii::$app->get('tweetshow');
+        $tweetStatistic = Yii::$app->get('tweetstatistic');
+        $fromDateTime   = 'от даты создания таблицы';
 
         $tweetShow->showStatisticInformMessage();
 
-        $enteredData = fgets($stdin);
+        if ($between === 'between') {
+            $tweetShow->showEnterFromDateTime();
 
-        try {
-            $dateTime = $this->convertDateTime($enteredData);
+            $fromDateTime = $this->entryDateTime();
 
-            /**
-             * @var TweetStatistic $tweetStatistic
-             */
-            $tweetStatistic = Yii::$app->get('tweetstatistic');
+            $tweetShow->showEnterToDateTime();
 
-            $statistic = $tweetStatistic->getHashtagsStatisticByDate($dateTime);
+            $toDateTime = $this->entryDateTime();
 
-            $tweetShow->statisticByHashtags($statistic, $dateTime);
-        } catch (\Exception $e) {
-            $tweetShow->wrongFormatMessage();
+            if ($toDateTime && $fromDateTime) {
+                $statistic = $tweetStatistic->getHashtagsStatistic($fromDateTime, $toDateTime);
+
+                $tweetShow->statisticByHashtags($statistic, $fromDateTime, $toDateTime);
+            } else {
+                $tweetShow->wrongFormatMessage();
+            }
+        } else {
+            $tweetShow->showEnterToDateTime();
+
+            if ($toDateTime = $this->entryDateTime()) {
+                $statistic = $tweetStatistic->getHashtagsStatistic($fromDateTime, $toDateTime);
+
+                $tweetShow->statisticByHashtags($statistic, $fromDateTime, $toDateTime);
+            } else {
+                $tweetShow->wrongFormatMessage();
+            }
         }
     }
 
-    private function convertDateTime($enteredData)
+    /**
+     * @return string
+     */
+    private function entryDateTime()
     {
-        $dateTime = new DateTime($enteredData);
+        $stdin = fopen("php://stdin", "r");
+
+        return $this->convertDateTime(fgets($stdin));
+    }
+
+    /**
+     * @param string $enteredDate
+     *
+     * @return null|string
+     */
+    private function convertDateTime($enteredDate)
+    {
+        try {
+            $dateTime = new DateTime($enteredDate);
+        } catch (\Exception $e) {
+
+            return NULL;
+        }
 
         return $dateTime->format('Y-m-d H:i:s');
     }
