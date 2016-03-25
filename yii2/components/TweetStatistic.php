@@ -15,20 +15,17 @@ use yii\base\Component;
 class TweetStatistic extends Component
 {
     /**
-     * @param $dateAndTime
+     * @param string $toDateTime
+     * @param string $fromDateTime
      *
      * @return array
      */
-    public function getHashtagsStatisticByDate($dateAndTime)
+    public function getHashtagsStatistic($fromDateTime, $toDateTime)
     {
-        $tweets = Tweet::find()
-            ->byDate($dateAndTime)
-            ->hashtagsViaJunctionTable()
-            ->all();
-
+        $tweets   = $this->getTweets($fromDateTime, $toDateTime);
         $hashtags = $this->getHashtags($tweets);
 
-        return $this->prepareHashtagsStatistic($hashtags);
+        return $this->prepareStatistic($hashtags);
     }
 
     /**
@@ -50,16 +47,32 @@ class TweetStatistic extends Component
     }
 
     /**
-     * @param array $hashtags
+     * @param array $array
      *
      * @return array
      */
-    private function prepareHashtagsStatistic(array $hashtags)
+    private function prepareStatistic(array $array)
     {
-        $statistic = array_count_values($hashtags);
+        $statistic = array_count_values($array);
 
         arsort($statistic);
 
         return $statistic;
+    }
+
+    /**
+     * @param $fromDateTime
+     * @param $toDateTime
+     *
+     * @return Tweet[]
+     */
+    private function getTweets($fromDateTime, $toDateTime)
+    {
+        $tweets = Tweet::find()
+            ->byDate($fromDateTime, $toDateTime)
+            ->hashtagsViaJunctionTable()
+            ->all();
+
+        return $tweets;
     }
 }
