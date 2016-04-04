@@ -10,15 +10,14 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'enableStrictParsing' => true,
-            'showScriptName' => false,
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'tweet',
                 ],
-               'GET tweet/hashtag-statistic/<from>/<to>' => 'tweet/hashtag-statistic',
-               'GET tweet/last-tweets/<count>' => 'tweet/last-tweets',
-               'GET tweet/find-by-hashtag/<hashtag>' => 'tweet/find-by-hashtag',
+               'GET <access-token>/tweet/hashtag-statistic/<from>/<to>' => 'tweet/hashtag-statistic',
+               'GET <access-token>/tweet/last-tweets/<count>' => 'tweet/last-tweets',
+               'GET <access-token>/tweet/find-by-hashtag/<hashtag>' => 'tweet/find-by-hashtag',
             ],
 
         ],
@@ -42,7 +41,7 @@ $config = [
 
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+             'enableSession' => false,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
